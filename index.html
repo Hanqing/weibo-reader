@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f2ec" />
+    <title>Weibo / Reader</title>
+    <link rel="stylesheet" href="reader-app.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="回到微博阅读器顶部">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="brand-type"><b>WEIBO</b><span>/ READER</span></span>
+        </a>
+        <div class="topbar-actions">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="dataStatus" class="data-status">读取资料索引</span>
+          <button id="themeToggle" class="icon-button" type="button" aria-label="切换阅读配色">◐</button>
+        </div>
+      </header>
+
+      <main id="top" class="workspace">
+        <aside class="left-rail" aria-label="筛选与资料索引">
+          <section class="identity-block">
+            <p class="eyebrow">PRIVATE ARCHIVE / 02</p>
+            <h1>把关注列表，<br />读成一条时间线。</h1>
+            <p id="archiveRange" class="rail-copy">正在读取本地微博资料。</p>
+          </section>
+
+          <section class="rail-section">
+            <div class="section-kicker"><span>01</span><h2>博主</h2></div>
+            <div id="authorFilters" class="author-filter-list" role="group" aria-label="按博主筛选"></div>
+          </section>
+
+          <section class="rail-section years-section">
+            <div class="section-kicker"><span>02</span><h2>年份</h2></div>
+            <div id="yearFilters" class="year-filter-list" role="group" aria-label="按年份筛选"></div>
+          </section>
+
+          <section class="rail-footer">
+            <p>本地数据 · 只读</p>
+            <p>按 <kbd>/</kbd> 快速搜索</p>
+          </section>
+        </aside>
+
+        <section class="reader-flow" aria-label="微博时间线">
+          <div class="reader-header">
+            <div>
+              <p id="resultCaption" class="eyebrow">LATEST ENTRIES</p>
+              <h2 id="readerTitle">最新资料</h2>
+            </div>
+            <button id="loadAllButton" class="load-all-button" type="button">载入完整档案 <span id="loadAllCount">0</span></button>
+          </div>
+
+          <div class="search-row">
+            <label class="search-box" for="searchInput">
+              <span aria-hidden="true">⌕</span>
+              <input id="searchInput" type="search" autocomplete="off" placeholder="搜索正文、转发内容或来源…" />
+              <kbd>/</kbd>
+            </label>
+            <button id="clearSearch" class="clear-search" type="button">清除</button>
+          </div>
+
+          <div class="toolbar" aria-label="阅读选项">
+            <div class="filter-chips" id="typeFilters" role="group" aria-label="微博类型">
+              <button type="button" class="chip is-active" data-type="all">全部</button>
+              <button type="button" class="chip" data-type="original">原创</button>
+              <button type="button" class="chip" data-type="repost">转发</button>
+              <button type="button" class="chip" data-type="long">长文</button>
+              <button type="button" class="chip" data-type="media">含媒体</button>
+            </div>
+            <label class="sort-select">排序
+              <select id="sortSelect">
+                <option value="new">由新到旧</option>
+                <option value="old">由旧到新</option>
+                <option value="hot">互动优先</option>
+              </select>
+            </label>
+          </div>
+
+          <div id="loadingState" class="loading-state" hidden>
+            <span class="loading-bar" aria-hidden="true"></span>
+            <p>正在整理本地资料…</p>
+          </div>
+          <div id="postFeed" class="post-feed" aria-live="polite"></div>
+          <div id="emptyState" class="empty-state" hidden>
+            <span class="empty-mark">—</span>
+            <h3>这一组资料里还没有匹配内容。</h3>
+            <p>尝试清除关键词、变更年份，或载入完整档案后再次搜索。</p>
+          </div>
+          <button id="moreButton" class="more-button" type="button" hidden>继续阅读</button>
+        </section>
+
+        <aside class="right-rail" aria-label="数据摘要">
+          <section class="summary-card summary-top">
+            <p class="eyebrow">ARCHIVE INDEX</p>
+            <div class="summary-number"><b id="totalPosts">—</b><span>条微博</span></div>
+            <p id="loadedProgress" class="summary-note">正在计算加载状态。</p>
+          </section>
+
+          <section class="summary-card">
+            <p class="summary-label">当前结果</p>
+            <div class="metric-row"><b id="visiblePosts">—</b><span>匹配条目</span></div>
+            <div class="metric-row"><b id="mediaPosts">—</b><span>含媒体内容</span></div>
+            <div class="metric-row"><b id="longPosts">—</b><span>长内容</span></div>
+          </section>
+
+          <section class="summary-card reading-note">
+            <p class="summary-label">阅读提示</p>
+            <p>选择年份会按需读取对应资料。需要跨全部年份搜索时，使用“载入完整档案”。</p>
+          </section>
+
+          <section class="summary-card legend-card">
+            <p class="summary-label">资料标识</p>
+            <p><i class="legend-dot pinned"></i>置顶或重点</p>
+            <p><i class="legend-dot repost"></i>转发内容</p>
+            <p><i class="legend-dot media"></i>附有图片或视频</p>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <dialog id="postDialog" class="post-dialog" aria-labelledby="dialogTitle">
+      <article class="dialog-paper">
+        <div class="dialog-head">
+          <p id="dialogMeta" class="eyebrow">WEIBO ARCHIVE</p>
+          <button id="dialogClose" class="dialog-close" type="button" aria-label="关闭详情">×</button>
+        </div>
+        <h2 id="dialogTitle">微博详情</h2>
+        <div id="dialogContent" class="dialog-content"></div>
+        <div class="dialog-actions">
+          <a id="sourceLink" class="source-link" href="#" target="_blank" rel="noopener noreferrer">在微博中打开 <span>↗</span></a>
+        </div>
+      </article>
+    </dialog>
+
+    <script src="reader-app.js" defer></script>
+  </body>
+</html>
